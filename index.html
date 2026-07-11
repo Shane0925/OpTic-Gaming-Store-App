@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>OpTic Shop</title>
+<style>
+  :root{
+    --green:#93C94E;
+    --green-bright:#87cf3a;
+    --green-olive:#5f7d33;
+    --ink:#111212;
+    --bg:#ffffff;
+    --muted:#9b9b9b;
+    --line:#e7e7e7;
+    --purple:#5A31F4;
+    --radius:14px;
+    --nav-h:64px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:#0c0f0a;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;
+    background-image:radial-gradient(1200px 800px at 70% 20%, #16210f 0%, #0c0f0a 60%);
+  }
+
+  /* ---------- Phone frame (desktop) ---------- */
+  .phone{
+    position:relative;
+    width:393px;height:852px;
+    background:#000;
+    border-radius:44px;
+    box-shadow:0 0 0 10px #1a1a1a, 0 0 0 12px #2c2c2c, 0 40px 80px rgba(0,0,0,.65);
+    overflow:hidden;
+    flex:none;
+  }
+  @media (max-width:500px), (max-height:900px) and (max-width:820px){
+    body{display:block;background:#000}
+    .phone{width:100%;height:100dvh;border-radius:0;box-shadow:none}
+  }
+
+  /* ---------- Screens ---------- */
+  .screen{
+    position:absolute;inset:0;
+    background:var(--bg);
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .screen.active{display:flex}
+  .scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+
+  /* ---------- Splash ---------- */
+  #splash{background:#000 url("assets/login-background.png") center/cover no-repeat;align-items:center;justify-content:center;z-index:60;transition:opacity .6s ease}
+  #splash .mark{width:120px;animation:pulse 1.8s ease-in-out infinite}
+  #splash.fade{opacity:0;pointer-events:none}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:.85}}
+
+  /* ---------- Login ---------- */
+  #login{background:#000 url("assets/login-background.png") center/cover no-repeat;justify-content:flex-start}
+  #login .wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:36px}
+  #login .mark{width:130px}
+  .login-card{
+    width:100%;
+    background:rgba(8,14,6,.55);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(6px);
+    border-radius:18px;
+    padding:28px 22px 22px;
+    box-shadow:inset 0 0 40px rgba(0,0,0,.45), 0 18px 40px rgba(0,0,0,.5);
+  }
+  .login-card h2{color:#fff;text-align:center;font-size:20px;letter-spacing:.5px;margin-bottom:22px}
+  .login-card input{
+    width:100%;background:rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:9px;color:#fff;
+    padding:13px 14px;font-size:15px;margin-bottom:14px;outline:none;
+  }
+  .login-card input::placeholder{color:rgba(255,255,255,.45);font-weight:600}
+  .login-card .or{color:#fff;text-align:center;font-weight:700;font-size:13px;margin:4px 0 14px}
+  .btn-shop{
+    width:100%;background:var(--purple);color:#fff;border:none;border-radius:9px;
+    padding:13px;font-size:15px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .btn-shop .shoplogo{font-weight:800;font-size:16px;letter-spacing:.2px}
+  .btn-login{
+    margin:20px 0 0 auto;display:block;
+    background:rgba(0,0,0,.25);color:#fff;
+    border:1.5px solid var(--green);border-radius:9px;
+    padding:11px 28px;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+  }
+
+  /* ---------- Home ---------- */
+  #home{background:#0d0d0d}
+  #home .hero{
+    position:absolute;inset:0;
+    background:url("assets/Screenshot 2026-07-08 153912.png") no-repeat;
+    background-size: 1450px 565px;
+    background-position: top;
+  }
+  #home .hero::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(13,13,13,0) 42%, rgba(13,13,13,.72) 62%, #0d0d0d 78%);
+  }
+  #home .home-logo{position:absolute;top:26px;left:50%;transform:translateX(-50%);width:44px;z-index:2}
+  #home .home-content{
+    position:absolute;left:0;right:0;bottom:calc(var(--nav-h) + 46px);
+    padding:0 24px;z-index:2;color:#fff;
+  }
+  #home .wordmark{width:180px;display:block;margin-bottom:14px}
+  #home .home-content h1{font-size:22px;font-weight:800;letter-spacing:.4px}
+  #home .home-content .live{color:#c9c9c9;font-size:13px;letter-spacing:1.5px;margin-top:6px;text-transform:uppercase}
+  .btn-explore{
+    margin-top:22px;background:transparent;color:#fff;
+    border:1.5px solid #fff;border-radius:999px;
+    padding:12px 30px;font-size:13px;font-weight:700;letter-spacing:1.5px;cursor:pointer;
+  }
+  .btn-explore:active{background:rgba(255,255,255,.15)}
+
+  /* ---------- Common header ---------- */
+  .app-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 20px 8px;
+  }
+  .app-header .title{font-size:19px;font-weight:800;letter-spacing:1.2px;color:var(--ink)}
+  .app-header .logo-sm{width:46px;height:auto;flex:none}
+
+  /* ---------- Shop ---------- */
+  .pill-dd{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#fff;border:none;border-radius:999px;
+    box-shadow:0 3px 14px rgba(0,0,0,.14);
+    padding:11px 18px;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;
+  }
+  .pill-dd svg{transition:transform .2s}
+  .pill-dd.open svg{transform:rotate(180deg)}
+
+  .carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 20px 4px;scrollbar-width:none}
+  .carousel::-webkit-scrollbar{display:none}
+  .caro-card{
+    position:relative;flex:0 0 88%;aspect-ratio:317/190;
+    border-radius:16px;overflow:hidden;scroll-snap-align:center;
+    background:#222 center/cover no-repeat;
+  }
+  .caro-card .caro-label{
+    position:absolute;left:0;right:0;bottom:0;
+    padding:26px 18px 14px;color:var(--green);
+    font-size:19px;font-weight:700;letter-spacing:.4px;
+    background:linear-gradient(180deg,transparent,rgba(0,0,0,.62));
+  }
+  .dots{display:flex;gap:7px;justify-content:center;padding:10px 0 2px}
+  .dots span{width:6px;height:6px;border-radius:50%;background:#d2d2d2;transition:background .2s}
+  .dots span.on{background:#4c4c4c}
+
+  .toolbar{display:flex;align-items:center;gap:10px;padding:12px 20px 4px}
+  .btn-filter{
+    width:44px;height:44px;flex:none;border:none;border-radius:12px;
+    background:#fff;box-shadow:0 3px 14px rgba(0,0,0,.14);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .chipbar{
+    flex:1;display:flex;align-items:center;gap:14px;
+    background:#fff;border-radius:12px;box-shadow:0 3px 14px rgba(0,0,0,.14);
+    padding:12px 14px;font-size:13.5px;color:#3c3c3c;overflow-x:auto;scrollbar-width:none;
+  }
+  .chipbar:empty{display:none}
+  .chipbar .clear{color:var(--green);font-weight:600;cursor:pointer;white-space:nowrap}
+  .chipbar .chip{white-space:nowrap}
+  .toolbar .count{margin-left:auto;font-size:14px;color:#555;white-space:nowrap}
+  .toolbar.no-filters .count{margin-left:auto}
+
+  .grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;
+    padding:16px 20px calc(var(--nav-h) + 40px);
+  }
+  .pcard{cursor:pointer}
+  .pcard .imgwrap{
+    position:relative;aspect-ratio:1/1.06;border-radius:14px;overflow:hidden;background:#ececec;
+  }
+  .pcard .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
+  .heart{
+    position:absolute;top:9px;right:9px;
+    width:34px;height:34px;border:none;border-radius:50%;
+    background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.18);
+  }
+  .heart svg{width:17px;height:17px;fill:none;stroke:#1b1b1b;stroke-width:2}
+  .heart.faved svg{fill:var(--green);stroke:var(--green)}
+  .pcard .pname{font-size:13.5px;font-weight:600;color:var(--ink);margin-top:9px;line-height:1.3;min-height:2.1em}
+  .pcard .pprice{font-size:13.5px;color:#3d3d3d;margin-top:3px}
+
+  /* ---------- Category dropdown ---------- */
+  .dd-menu{
+    position:absolute;top:70px;left:20px;z-index:40;
+    background:#fff;border-radius:16px;min-width:200px;
+    box-shadow:0 14px 44px rgba(0,0,0,.22);
+    padding:8px 0;display:none;
+  }
+  .dd-menu.open{display:block;animation:pop .16s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .dd-menu button{
+    display:flex;align-items:center;gap:8px;width:100%;
+    background:none;border:none;text-align:left;
+    padding:11px 20px;font-size:15px;color:var(--ink);cursor:pointer;
+  }
+  .dd-menu button:active{background:#f4f4f4}
+  .dd-menu .check{color:var(--ink);font-weight:700}
+
+  /* ---------- Sheets (product / filter / address) ---------- */
+  .sheet-veil{
+    position:absolute;inset:0;z-index:45;background:rgba(0,0,0,.42);
+    opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .sheet-veil.open{opacity:1;pointer-events:auto}
+  .sheet{
+    position:absolute;left:0;right:0;bottom:0;z-index:46;
+    background:#fff;border-radius:22px 22px 0 0;
+    padding:14px 22px 30px;
+    transform:translateY(105%);transition:transform .3s cubic-bezier(.32,.72,.33,1);
+    max-height:78%;overflow-y:auto;
+  }
+  .sheet.open{transform:none}
+  .sheet .grab{width:42px;height:4px;border-radius:2px;background:#dcdcdc;margin:0 auto 16px}
+  .sheet h3{font-size:17px;font-weight:800;color:var(--ink)}
+
+  .psheet-img{width:100%;aspect-ratio:1/0.82;border-radius:14px;object-fit:cover;background:#ececec;margin-top:12px}
+  .psheet-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:14px}
+  .psheet-row .cat{color:var(--muted);font-size:13px;margin-top:4px}
+  .psheet-price{font-size:17px;font-weight:800;white-space:nowrap}
+  .sizes{display:flex;gap:9px;margin-top:16px}
+  .sizes button{
+    min-width:46px;padding:10px 0;border-radius:10px;border:1.5px solid #d9d9d9;
+    background:#fff;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;
+  }
+  .sizes button.sel{border-color:var(--ink);background:var(--ink);color:#fff}
+  .btn-primary{
+    width:100%;margin-top:20px;
+    background:var(--ink);color:#fff;border:none;border-radius:12px;
+    padding:15px;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;
+  }
+  .btn-primary:disabled{opacity:.4}
+  .oos{color:#c0392b;font-size:13px;font-weight:600;margin-top:12px}
+
+  .fgroup{margin-top:18px}
+  .fgroup .flabel{font-size:13px;font-weight:700;color:#7c7c7c;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
+  .fopts{display:flex;flex-wrap:wrap;gap:9px}
+  .fopts button{
+    padding:9px 16px;border-radius:999px;border:1.5px solid #d9d9d9;
+    background:#fff;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;
+  }
+  .fopts button.sel{border-color:var(--green-olive);background:var(--green-olive);color:#fff}
+  .sheet .row2{display:flex;gap:10px;margin-top:22px}
+  .btn-ghost{
+    flex:1;background:#fff;border:1.5px solid #d9d9d9;border-radius:12px;
+    padding:14px;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;
+  }
+  .sheet .row2 .btn-primary{flex:1.4;margin-top:0}
+
+  .sheet input.f{
+    width:100%;border:1.5px solid #d9d9d9;border-radius:10px;
+    padding:12px 13px;font-size:14px;margin-top:10px;outline:none;
+  }
+
+  /* ---------- Cart ---------- */
+  .cart-list{padding:6px 20px 0}
+  .cart-item{display:flex;gap:14px;padding:16px 0;align-items:flex-start}
+  .cart-item .thumb{width:96px;height:96px;flex:none;border-radius:12px;object-fit:cover;background:#ececec}
+  .cart-item .mid{flex:1;min-width:0}
+  .cart-item .cname{font-size:14px;font-weight:700;color:var(--ink);line-height:1.3}
+  .cart-item .meta{font-size:12.5px;color:#333;margin-top:5px}
+  .cart-item .meta span{color:var(--muted)}
+  .qty{
+    display:inline-flex;align-items:center;gap:14px;
+    border:1.5px solid #cfcfcf;border-radius:999px;
+    padding:5px 13px;margin-top:10px;
+  }
+  .qty button{background:none;border:none;font-size:16px;font-weight:700;cursor:pointer;color:var(--ink);line-height:1}
+  .qty .q{font-size:13.5px;font-weight:600;min-width:14px;text-align:center}
+  .cart-item .right{display:flex;flex-direction:column;align-items:flex-end;gap:34px;flex:none}
+  .btn-trash{background:none;border:none;cursor:pointer;padding:4px}
+  .cart-item .lprice{font-size:14.5px;font-weight:700;color:var(--ink)}
+  .cart-empty{padding:60px 30px;text-align:center;color:var(--muted);font-size:14.5px}
+
+  .summary{
+    margin:14px 20px 0;padding:20px;
+    background:#fff;border-radius:16px;
+    box-shadow:0 6px 26px rgba(0,0,0,.12);
+  }
+  .summary h3{font-size:16.5px;font-weight:800;margin-bottom:14px}
+  .srow{display:flex;justify-content:space-between;font-size:14px;color:#4b4b4b;padding:5px 0}
+  .srow.total{border-top:1px solid var(--line);margin-top:10px;padding-top:14px;font-weight:800;color:var(--ink);font-size:15px}
+  .btn-checkout{
+    width:100%;margin-top:16px;
+    background:var(--ink);color:#fff;border:none;border-radius:999px;
+    padding:15px;font-size:13.5px;font-weight:800;letter-spacing:1.6px;cursor:pointer;
+  }
+  .payrow{display:flex;gap:10px;padding:16px 20px calc(var(--nav-h) + 42px)}
+  .payrow button{
+    flex:1;height:44px;border:none;border-radius:8px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pay-shop{background:var(--purple);color:#fff;font-weight:800;font-size:16px;letter-spacing:.2px}
+  .pay-paypal{background:#FFC439}
+  .pay-paypal img{height:20px}
+  .pay-gpay{background:#000;color:#fff;font-weight:600;font-size:15px;gap:3px}
+
+  /* ---------- Profile ---------- */
+  .prof-head{display:flex;flex-direction:column;align-items:center;padding:20px 0 6px}
+  .avatar{
+    width:92px;height:92px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .prof-head .pname2{font-size:18px;font-weight:700;margin-top:14px;color:var(--ink)}
+  .btn-editprof{
+    margin-top:12px;background:#fff;border:1.5px solid #d9d9d9;border-radius:999px;
+    padding:9px 22px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;
+  }
+  .ptabs{display:flex;margin-top:22px;border-bottom:1px solid transparent}
+  .ptabs button{
+    flex:1;background:none;border:none;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:7px;
+    padding:10px 0 14px;color:#b3b3b3;font-size:14.5px;
+    border-left:1px solid #e3e3e3;
+  }
+  .ptabs button:first-child{border-left:none}
+  .ptabs button svg{width:22px;height:22px;stroke:#b3b3b3;fill:none;stroke-width:1.8}
+  .ptabs button.on{color:var(--ink);font-weight:700}
+  .ptabs button.on svg{stroke:var(--ink)}
+  .ptab-body{padding:18px 20px calc(var(--nav-h) + 40px)}
+
+  .order-item{display:flex;gap:16px;padding:6px 0 18px;border-bottom:1px solid var(--line)}
+  .order-item .othumb{width:120px;height:100px;border-radius:12px;object-fit:cover;background:#ececec;flex:none}
+  .order-item .ostatus{font-size:12.5px;color:var(--muted)}
+  .order-item .oname{font-size:14px;font-weight:700;color:var(--ink);margin:3px 0 10px}
+  .order-item .odesc{font-size:12.5px;color:#a3a3a3;line-height:1.55}
+
+  .set-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+  .set-row .k{font-size:15.5px;font-weight:700;color:var(--ink)}
+  .set-row .action{font-size:14px;font-weight:600;color:var(--ink);background:none;border:none;cursor:pointer}
+  .set-sub{display:flex;justify-content:space-between;align-items:center;padding:10px 0 4px 8px}
+  .set-sub .k2{font-size:14px;color:#2c2c2c}
+  .set-sub .v{font-size:13.5px;color:#b9b9b9}
+  .addr{display:flex;align-items:center;gap:12px;padding:11px 0 11px 2px;cursor:pointer}
+  .addr svg{flex:none}
+  .addr .a-mid{flex:1;min-width:0}
+  .addr .a-name{font-size:13.5px;font-weight:700;color:var(--ink)}
+  .addr .a-name .def{font-weight:500;color:#b9b9b9;font-size:12.5px;margin-left:8px}
+  .addr .a-line{font-size:12.5px;color:#6f6f6f;margin-top:2px}
+  .addr .chev{color:#c2c2c2}
+
+  /* ---------- Search ---------- */
+  #search .searchbar{
+    display:flex;align-items:center;gap:10px;margin:0 20px;
+    background:#f1f1f1;border-radius:12px;padding:12px 14px;
+  }
+  #search .searchbar input{flex:1;background:none;border:none;outline:none;font-size:15px}
+  .no-results{padding:50px 20px;text-align:center;color:var(--muted);font-size:14px}
+
+  /* ---------- Bottom nav ---------- */
+  .navbar{
+    position:absolute;left:16px;right:16px;bottom:18px;z-index:30;
+    height:var(--nav-h);border-radius:999px;
+    display:none;align-items:center;justify-content:space-around;
+    background:rgba(40,40,40,.68);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+    transition:background .3s;
+  }
+  .navbar.show{display:flex}
+  .navbar.tint-gray{background:rgba(120,120,120,.82)}
+  .navbar.tint-green{background:rgba(95,125,51,.9)}
+  .navbar button{
+    background:none;border:none;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    width:56px;padding-top:4px;
+  }
+  .navbar button svg{width:23px;height:23px;fill:#fff}
+  .navbar button .bar{width:22px;height:3px;border-radius:2px;background:transparent}
+  .navbar button.on .bar{background:var(--green)}
+
+  /* ---------- Toast ---------- */
+  #toast{
+    position:absolute;left:50%;bottom:calc(var(--nav-h) + 34px);z-index:55;
+    transform:translateX(-50%) translateY(16px);
+    background:rgba(17,18,18,.94);color:#fff;
+    padding:11px 20px;border-radius:999px;font-size:13.5px;font-weight:600;
+    opacity:0;pointer-events:none;transition:all .28s;white-space:nowrap;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%)}
+
+  .og-mark{display:block}
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- ========= SPLASH ========= -->
+  <div class="screen active" id="splash" style="display:flex">
+    <svg class="mark" viewBox="0 0 510 335" aria-label="OpTic">
+      <use href="#ogpaths-light"></use>
+    </svg>
+  </div>
+
+  <!-- ========= LOGIN ========= -->
+  <div class="screen" id="login">
+    <div class="wrap">
+      <svg class="mark" viewBox="0 0 510 335"><use href="#ogpaths-light"></use></svg>
+      <div class="login-card">
+        <h2>ACCOUNT LOGIN</h2>
+        <input type="email" id="loginEmail" placeholder="Email" autocomplete="off">
+        <input type="password" id="loginPass" placeholder="Password">
+        <div class="or">or</div>
+        <button class="btn-shop" onclick="doLogin()">Sign in with <span class="shoplogo">shop</span></button>
+        <button class="btn-login" onclick="doLogin()">LOGIN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= HOME ========= -->
+  <div class="screen" id="home">
+    <div class="hero"></div>
+    <svg class="home-logo" viewBox="0 0 510 335"><use href="#ogpaths-dark"></use></svg>
+    <div class="home-content">
+      <svg class="wordmark" viewBox="0 0 1920 216" fill="#93C94E">
+        <use href="#wordmarkpaths"></use>
+      </svg>
+      <h1>PARIS COLLECTION</h1>
+      <div class="live">Live Now</div>
+      <button class="btn-explore" onclick="goShop('Shop All')">EXPLORE</button>
+    </div>
+  </div>
+
+  <!-- ========= SHOP ========= -->
+  <div class="screen" id="shop">
+    <div class="app-header">
+      <button class="pill-dd" id="catBtn" onclick="toggleCatMenu(event)">
+        <span id="catLabel">Shop All</span>
+        <svg width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+      <svg class="logo-sm" viewBox="0 0 510 335"><use href="#ogpaths-dark"></use></svg>
+    </div>
+
+    <div class="scroll" id="shopScroll">
+      <div class="carousel" id="carousel">
+        <div class="caro-card" style="background-image:url('assets/Screenshot 2026-07-08 153912.png')">
+          <div class="caro-label">PARIS COLLECTION</div>
+        </div>
+        <div class="caro-card" style="background-image:url('assets/Screenshot 2026-07-08 175928.png')">
+          <div class="caro-label">MAOR III COLLECTION</div>
+        </div>
+      </div>
+      <div class="dots" id="caroDots"><span class="on"></span><span></span></div>
+
+      <div class="toolbar">
+        <button class="btn-filter" onclick="openFilterSheet()" aria-label="Filters">
+          <svg width="19" height="18" viewBox="0 0 20 19"><path d="M1 1h18l-7 8v7l-4 2v-9L1 1z" fill="none" stroke="#111" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="chipbar" id="chipbar" style="display:none"></div>
+        <div class="count" id="itemCount"></div>
+      </div>
+
+      <div class="grid" id="productGrid"></div>
+    </div>
+
+    <div class="dd-menu" id="catMenu"></div>
+  </div>
+
+  <!-- ========= CART ========= -->
+  <div class="screen" id="cart">
+    <div class="app-header">
+      <div class="title">SHOPPING CART</div>
+      <svg class="logo-sm" viewBox="0 0 510 335"><use href="#ogpaths-dark"></use></svg>
+    </div>
+    <div class="scroll">
+      <div class="cart-list" id="cartList"></div>
+      <div id="cartSummaryWrap"></div>
+    </div>
+  </div>
+
+  <!-- ========= PROFILE ========= -->
+  <div class="screen" id="profile">
+    <div class="app-header">
+      <div class="title">PROFILE</div>
+      <svg class="logo-sm" viewBox="0 0 510 335"><use href="#ogpaths-dark"></use></svg>
+    </div>
+    <div class="scroll">
+      <div class="prof-head">
+        <div class="avatar">
+          <img width="98" height="98" src="assets/S Logo_v2.png" >
+        </img>
+        </div>
+        <div class="pname2">Shane Kemp</div>
+        <button class="btn-editprof" onclick="toast('Edit profile is a demo action')">Edit Profile</button>
+      </div>
+      <div class="ptabs">
+        <button id="ptab-orders" onclick="setProfileTab('orders')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13M8 8c-2.5 0-3.5-1.5-3.5-2.7C4.5 4 5.6 3 7 3c2.4 0 4 2.6 5 5 1-2.4 2.6-5 5-5 1.4 0 2.5 1 2.5 2.3C19.5 6.5 18.5 8 16 8"/></svg>
+          Orders
+        </button>
+        <button id="ptab-favorites" onclick="setProfileTab('favorites')">
+          <svg viewBox="0 0 24 24"><path d="M12 21C7 16.5 2.5 13 2.5 8.6 2.5 5.6 4.8 3.5 7.5 3.5c1.8 0 3.4 1 4.5 2.6 1.1-1.6 2.7-2.6 4.5-2.6 2.7 0 5 2.1 5 5.1C21.5 13 17 16.5 12 21z"/></svg>
+          Favorites
+        </button>
+        <button id="ptab-settings" onclick="setProfileTab('settings')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.76l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.6 1.6 0 0 0-1.76-.32 1.6 1.6 0 0 0-.97 1.47V21a2 2 0 1 1-4 0v-.09a1.6 1.6 0 0 0-1.05-1.47 1.6 1.6 0 0 0-1.76.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.6 1.6 0 0 0 4.68 15a1.6 1.6 0 0 0-1.47-.97H3a2 2 0 1 1 0-4h.09a1.6 1.6 0 0 0 1.47-1.05 1.6 1.6 0 0 0-.32-1.76l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.76.32h.09A1.6 1.6 0 0 0 9.89 3.2V3a2 2 0 1 1 4 0v.09a1.6 1.6 0 0 0 .97 1.47 1.6 1.6 0 0 0 1.76-.32l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.32 1.76v.09c.26.6.85 1 1.5 1.02H21a2 2 0 1 1 0 4h-.09a1.6 1.6 0 0 0-1.51 1.06z"/></svg>
+          Settings
+        </button>
+      </div>
+      <div class="ptab-body" id="ptabBody"></div>
+    </div>
+  </div>
+
+  <!-- ========= SEARCH ========= -->
+  <div class="screen" id="search">
+    <div class="app-header">
+      <div class="title">SEARCH</div>
+      <svg class="logo-sm" viewBox="0 0 510 335"><use href="#ogpaths-dark"></use></svg>
+    </div>
+    <div class="searchbar">
+      <svg width="17" height="17" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7" fill="none" stroke="#777" stroke-width="2.4"/><path d="M16 16l6 6" stroke="#777" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <input id="searchInput" placeholder="Search products" oninput="renderSearch()">
+    </div>
+    <div class="scroll">
+      <div class="grid" id="searchGrid"></div>
+      <div class="no-results" id="searchEmpty" style="display:none">No products found</div>
+    </div>
+  </div>
+
+  <!-- ========= NAV ========= -->
+  <div class="navbar" id="navbar">
+    <button data-nav="home" onclick="nav('home')">
+      <svg viewBox="0 0 24 24"><path d="M12 2.6 2.6 10.8h2.2V21h5.7v-6h3v6h5.7V10.8h2.2L12 2.6z"/></svg>
+      <div class="bar"></div>
+    </button>
+    <button data-nav="shop" onclick="nav('shop')">
+      <svg viewBox="0 0 24 24"><path d="M3 4h18v3.4c0 1.4-1 2.6-2.5 2.6S16 8.8 16 7.4c0 1.4-1.2 2.6-2.7 2.6-1.4 0-2.6-1.2-2.6-2.6 0 1.4-1.2 2.6-2.7 2.6C6.6 10 5.5 8.8 5.5 7.4 5.5 8.8 4.5 10 3 10V4zm1 8h16v9H4v-9zm3 2v4h10v-4H7z"/></svg>
+      <div class="bar"></div>
+    </button>
+    <button data-nav="cart" onclick="nav('cart')">
+      <svg viewBox="0 0 24 24"><path d="M8 8V6.5C8 4 9.8 2.5 12 2.5S16 4 16 6.5V8h3.2l.8 13H4l.8-13H8zm2 0h4V6.5c0-1.4-.8-2.2-2-2.2s-2 .8-2 2.2V8z"/></svg>
+      <div class="bar"></div>
+    </button>
+    <button data-nav="profile" onclick="nav('profile')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="7.6" r="4.4"/><path d="M3.6 21c.7-4.2 4.2-6.6 8.4-6.6s7.7 2.4 8.4 6.6H3.6z"/></svg>
+      <div class="bar"></div>
+    </button>
+    <button data-nav="search" onclick="nav('search')">
+      <svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.7 4.8-1.7 1.7-4.8-4.7A7.5 7.5 0 1 1 10.5 3zm0 2.4a5.1 5.1 0 1 0 0 10.2 5.1 5.1 0 0 0 0-10.2z"/></svg>
+      <div class="bar"></div>
+    </button>
+  </div>
+
+  <!-- ========= SHEETS ========= -->
+  <div class="sheet-veil" id="veil" onclick="closeSheets()"></div>
+
+  <div class="sheet" id="productSheet">
+    <div class="grab"></div>
+    <img class="psheet-img" id="psImg" alt="">
+    <div class="psheet-row">
+      <div>
+        <h3 id="psName"></h3>
+        <div class="cat" id="psCat"></div>
+      </div>
+      <div class="psheet-price" id="psPrice"></div>
+    </div>
+    <div class="sizes" id="psSizes"></div>
+    <div class="oos" id="psOos" style="display:none">Out of stock</div>
+    <button class="btn-primary" id="psAdd" onclick="addToCartFromSheet()">ADD TO CART</button>
+  </div>
+
+  <div class="sheet" id="filterSheet">
+    <div class="grab"></div>
+    <h3>Filter</h3>
+    <div class="fgroup">
+      <div class="flabel">Brand</div>
+      <div class="fopts" id="fBrand"></div>
+    </div>
+    <div class="fgroup">
+      <div class="flabel">Size</div>
+      <div class="fopts" id="fSize"></div>
+    </div>
+    <div class="fgroup">
+      <div class="flabel">Availability</div>
+      <div class="fopts" id="fStock"></div>
+    </div>
+    <div class="row2">
+      <button class="btn-ghost" onclick="clearFilters();closeSheets()">Clear all</button>
+      <button class="btn-primary" onclick="closeSheets()">APPLY</button>
+    </div>
+  </div>
+
+  <div class="sheet" id="addrSheet">
+    <div class="grab"></div>
+    <h3>Add address</h3>
+    <input class="f" id="adName" placeholder="Full name" value="Shane Kemp">
+    <input class="f" id="adLine" placeholder="Street address">
+    <input class="f" id="adCity" placeholder="City, State ZIP">
+    <button class="btn-primary" onclick="saveAddress()">SAVE ADDRESS</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- shared svg defs -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <g id="ogpaths-dark">
+        <g transform="matrix(1.3333333,0,0,-1.3333333,-194.78533,599.86664)"><g transform="matrix(0.12486598,0,0,0.12483995,-37.258936,-50.276067)">
+          <path d="m 4027.49,3516.5 c -18.52,-116.06 -44.69,-221.43 -78.18,-316.67 h 552.3 v 316.67 h -474.12" fill="#87cf3a"/>
+          <path d="M 4087.03,2340.67 H 2368.91 c 0,46.52 3.33,91.08 9.55,133.75 17.83,122.39 59.67,228.95 116.63,319.93 170.71,272.67 477.06,405.48 679.13,405.48 h 340.28 c 53.51,89.71 92.2,195.01 109.17,316.67 h -506.12 c -444.61,0 -841.45,-236.6 -1040.46,-722.42 -39.59,-96.65 -71.32,-203.18 -94.07,-319.66 -26.64,-136.44 -40.99,-286.47 -40.99,-450.42 h 2558.75 v 852.5 h -413.75 v -535.83" fill="#87cf3a"/>
+          <path d="m 2650.08,3976.5 c -569.14,0 -1151.69,-488.11 -1151.69,-1502.08 0,0 172.52,0 484.63,0 22.75,116.48 54.48,223.01 94.07,319.66 -99.22,-0.42 -151.22,-0.96 -151.22,-0.96 0,583.69 474.01,864.68 767.42,864.68 h 940.01 c 0,-49.37 -3.37,-96.42 -9.63,-141.3 -16.97,-121.66 -55.66,-226.96 -109.17,-316.67 -166.17,-278.58 -475.06,-406.71 -719.41,-406.71 -109.69,0.64 -209.76,1.02 -300,1.23 -56.96,-90.98 -98.8,-197.54 -116.63,-319.93 137.03,0 288.29,0 452.67,0 553.65,0 939.97,218.6 1118.18,725.41 33.49,95.24 59.66,200.61 78.18,316.67 22.02,138.03 33.29,291.08 33.29,460 h -1410.7" fill="#111212"/>
+        </g></g>
+      </g>
+      <g id="ogpaths-light">
+        <g transform="matrix(1.3333333,0,0,-1.3333333,-194.78533,599.86664)"><g transform="matrix(0.12486598,0,0,0.12483995,-37.258936,-50.276067)">
+          <path d="m 4027.49,3516.5 c -18.52,-116.06 -44.69,-221.43 -78.18,-316.67 h 552.3 v 316.67 h -474.12" fill="#87cf3a"/>
+          <path d="M 4087.03,2340.67 H 2368.91 c 0,46.52 3.33,91.08 9.55,133.75 17.83,122.39 59.67,228.95 116.63,319.93 170.71,272.67 477.06,405.48 679.13,405.48 h 340.28 c 53.51,89.71 92.2,195.01 109.17,316.67 h -506.12 c -444.61,0 -841.45,-236.6 -1040.46,-722.42 -39.59,-96.65 -71.32,-203.18 -94.07,-319.66 -26.64,-136.44 -40.99,-286.47 -40.99,-450.42 h 2558.75 v 852.5 h -413.75 v -535.83" fill="#87cf3a"/>
+          <path d="m 2650.08,3976.5 c -569.14,0 -1151.69,-488.11 -1151.69,-1502.08 0,0 172.52,0 484.63,0 22.75,116.48 54.48,223.01 94.07,319.66 -99.22,-0.42 -151.22,-0.96 -151.22,-0.96 0,583.69 474.01,864.68 767.42,864.68 h 940.01 c 0,-49.37 -3.37,-96.42 -9.63,-141.3 -16.97,-121.66 -55.66,-226.96 -109.17,-316.67 -166.17,-278.58 -475.06,-406.71 -719.41,-406.71 -109.69,0.64 -209.76,1.02 -300,1.23 -56.96,-90.98 -98.8,-197.54 -116.63,-319.93 137.03,0 288.29,0 452.67,0 553.65,0 939.97,218.6 1118.18,725.41 33.49,95.24 59.66,200.61 78.18,316.67 22.02,138.03 33.29,291.08 33.29,460 h -1410.7" fill="#ffffff"/>
+        </g></g>
+      </g>
+      <g id="wordmarkpaths">
+        <path d="M0 197.945V215.15H155.827C300.125 215.15 372.273 149.168 372.273 17.2047V0H216.446C72.1486 0 0 65.9818 0 197.945ZM181.81 172.116H60.5957C60.5957 91.7889 103.885 48.7542 190.463 43.0117H311.678C311.678 123.338 268.388 166.373 181.81 172.116Z"/>
+        <path d="M466.384 215.173H526.979V129.104H674.153C783.815 129.104 838.657 86.0692 838.657 0H466.384V215.173ZM770.605 43.0346C758.707 71.7243 732.333 86.0692 691.483 86.0692H526.979V43.0346H770.605Z"/>
+        <path d="M929.689 43.0346H1085.54V215.173H1146.14V43.0346H1301.96V0H929.689V43.0346Z"/>
+        <path d="M1456.67 0H1396.07V215.173H1456.67V0Z"/>
+        <path d="M1738.19 43.0346H1920V0H1764.17C1619.88 0 1547.73 65.9818 1547.73 197.945V215.15H1920V172.116H1608.32C1608.32 91.7889 1651.61 48.7542 1738.19 43.0117V43.0346Z"/>
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const A = "assets/";
+const PRODUCTS = [
+  {id:"cream-murus",   name:"Cream Murus Viridis Hoodie",              price:85, cat:"Hoodies",  img:A+"Screenshot 2026-07-09 011421.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"blue-hat",      name:"Blue Murus Viridis Hat",                  price:35, cat:"Headwear", img:A+"Screenshot 2026-07-09 021756.png", sizes:["M/L"], inStock:true,
+                       desc:"100% Polyester\nEmbroidered Front Design\nMajor 4 Collection 2026"},
+  {id:"texas-black",   name:"2026 OpTic Texas Team Kit Hoodie - Black",price:99, cat:"Hoodies",  img:A+"Screenshot 2026-07-08 174521.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"tote",          name:"OpTic Tote Bag",                          price:30, cat:"Gear",     img:A+"Screenshot 2026-07-08 160439.png", altImg:A+"Screenshot 2026-07-09 021855.png", sizes:["One Size"], inStock:true},
+  {id:"scump-designer",name:"Scump Watch Party Designer Hoodie (Stone)",price:75,cat:"Hoodies",  img:A+"Screenshot 2026-07-09 014835.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"huntsmen-flag", name:"Huntsmen Flag",                           price:40, cat:"Gear",     img:A+"Screenshot 2026-07-09 021835.png", sizes:["One Size"], inStock:true},
+  {id:"distorted-ls",  name:"Black Distorted Oversize Long Sleeve",    price:45, cat:"Tops",     img:A+"Screenshot 2026-07-09 022055.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"green-jersey",  name:"2026 OpTic Texas Green Variant Jersey",   price:99, cat:"Jerseys",  img:A+"Screenshot 2026-07-09 022230.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"black-logo",    name:"Black Logo Hoodie",                       price:75, cat:"Hoodies",  img:A+"Screenshot 2026-07-09 021414.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"scump-stone",   name:"Scump Watch Party Hoodie (Stone)",        price:75, cat:"Hoodies",  img:A+"Screenshot 2026-07-09 014919.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"gl-sandstone",  name:"GL Fall Outdoors Hoodie - Sandstone",     price:75, cat:"Hoodies",  img:A+"Screenshot 2026-07-08 174720.png", cartImg:A+"Screenshot 2026-07-09 013951.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"gl-brown",      name:"GL Fall Outdoors Hoodie - Brown",         price:75, cat:"Hoodies",  img:A+"Screenshot 2026-07-08 174703.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"texas-white",   name:"2026 OpTic Texas Team Kit Hoodie - White",price:99, cat:"Hoodies",  img:A+"Screenshot 2026-07-08 174501.png", sizes:["S","M","L","XL"], inStock:false},
+  {id:"scump-tan",     name:"Scump Watch Party Designer Hoodie (Tan)", price:75, cat:"Hoodies",  img:A+"Screenshot 2026-07-09 021320.png", sizes:["S","M","L","XL"], inStock:true},
+  {id:"oval-hoodie",   name:"Black Oval Logo Hoodie",                  price:75, cat:"Hoodies",  img:A+"Screenshot 2026-07-08 174551.png", sizes:["S","M","L","XL"], inStock:true},
+];
+const CATEGORIES = ["Shop All","Jerseys","Tops","Bottoms","Hoodies","Jackets","Headwear","Gear"];
+const CAT_MAP = {Jerseys:"Jerseys", Tops:"Tops", Bottoms:"Bottoms", Hoodies:"Hoodies", Jackets:"Jackets", Headwear:"Headwear", Gear:"Gear"};
+const SHIPPING = 9, DISCOUNT = 15;
+
+const state = {
+  category: "Shop All",
+  filters: {brand:false, sizes:[], inStock:false},
+  favorites: new Set(["cream-murus","blue-hat","texas-black","tote","scump-designer","huntsmen-flag","distorted-ls","green-jersey"]),
+  cart: [
+    {id:"cream-murus", size:"M", qty:1},
+    {id:"texas-black", size:"L", qty:1},
+    {id:"gl-sandstone", size:"S", qty:1},
+  ],
+  orders: [
+    {id:"blue-hat", status:"Delivered"}
+  ],
+  addresses: [
+    {name:"Shane Kemp", line:"1234 Road Street City, State 12345, United States", def:true},
+    {name:"Shane Kemp", line:"1234 Road Street City, State 12345, United States", def:false},
+    {name:"Shane Kemp", line:"1234 Road Street City, State 12345, United States", def:false},
+  ],
+  profileTab: "favorites",
+  sheetProduct: null,
+  sheetSize: null,
+};
+const byId = id => PRODUCTS.find(p => p.id === id);
+const money = n => "$" + n.toFixed(2);
+
+/* ================= NAVIGATION ================= */
+const NAV_TINT = {home:"", shop:"tint-gray", cart:"tint-green", profile:"tint-gray", search:"tint-gray"};
+let current = "splash";
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === id));
+  current = id;
+  const nb = document.getElementById("navbar");
+  const inApp = ["home","shop","cart","profile","search"].includes(id);
+  nb.classList.toggle("show", inApp);
+  nb.classList.remove("tint-gray","tint-green");
+  if (NAV_TINT[id]) nb.classList.add(NAV_TINT[id]);
+  nb.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.nav === id));
+  closeSheets(); closeCatMenu();
+}
+function nav(id){
+  if (id === "shop") renderShop();
+  if (id === "cart") renderCart();
+  if (id === "profile") renderProfile();
+  if (id === "search"){ show(id); renderSearch(); document.getElementById("searchInput").focus(); return; }
+  show(id);
+}
+function goShop(cat){ state.category = cat; nav("shop"); }
+function doLogin(){ show("home"); }
+
+/* splash (a #hash like index.html#shop deep-links straight to that screen) */
+setTimeout(() => {
+  const s = document.getElementById("splash");
+  s.classList.add("fade");
+  const h = location.hash.slice(1);
+  ["home","shop","cart","profile","search","login"].includes(h) ? nav(h) : show("login");
+  setTimeout(() => s.style.display = "none", 650);
+}, 1700);
+
+/* ================= SHOP ================= */
+function activeProducts(){
+  let list = PRODUCTS;
+  if (state.category !== "Shop All"){
+    const c = CAT_MAP[state.category];
+    list = list.filter(p => p.cat === c);
+  }
+  const f = state.filters;
+  if (f.inStock) list = list.filter(p => p.inStock);
+  if (f.sizes.length) list = list.filter(p => f.sizes.some(s => p.sizes.includes(s)));
+  return list;
+}
+function heartSvg(){ return '<svg viewBox="0 0 24 24"><path d="M12 20.5C7.5 16.5 3.5 13.4 3.5 9.5 3.5 6.9 5.5 5 7.9 5c1.6 0 3.1.9 4.1 2.3C13 5.9 14.5 5 16.1 5c2.4 0 4.4 1.9 4.4 4.5 0 3.9-4 7-8.5 11z"/></svg>'; }
+
+function productCard(p){
+  const faved = state.favorites.has(p.id) ? " faved" : "";
+  return `<div class="pcard" onclick="openProductSheet('${p.id}')">
+    <div class="imgwrap">
+      <img src="${p.img}" alt="${p.name}" loading="lazy">
+      <button class="heart${faved}" onclick="event.stopPropagation();toggleFav('${p.id}',this)">${heartSvg()}</button>
+    </div>
+    <div class="pname">${p.name}</div>
+    <div class="pprice">${money(p.price)}</div>
+  </div>`;
+}
+
+function renderShop(){
+  document.getElementById("catLabel").textContent = state.category;
+  const list = activeProducts();
+  document.getElementById("productGrid").innerHTML = list.map(productCard).join("");
+  document.getElementById("itemCount").textContent = list.length + " Items";
+  renderChipbar();
+  renderCatMenu();
+}
+
+function renderChipbar(){
+  const f = state.filters, chips = [];
+  if (f.brand) chips.push("Optic");
+  if (f.sizes.length) chips.push(f.sizes.join("/"));
+  if (f.inStock) chips.push("In Stock");
+  const bar = document.getElementById("chipbar");
+  if (!chips.length){ bar.style.display = "none"; bar.innerHTML = ""; return; }
+  bar.style.display = "flex";
+  bar.innerHTML = chips.map(c => `<span class="chip">${c}</span>`).join("") +
+    `<span class="clear" onclick="clearFilters()">Clear all</span>`;
+}
+function clearFilters(){
+  state.filters = {brand:false, sizes:[], inStock:false};
+  renderShop(); renderFilterSheet();
+}
+
+/* category dropdown */
+function renderCatMenu(){
+  document.getElementById("catMenu").innerHTML = CATEGORIES.map(c =>
+    `<button onclick="pickCategory('${c}')">${c}${c === state.category ? ' <span class="check">&#10003;</span>' : ""}</button>`
+  ).join("");
+}
+function toggleCatMenu(e){
+  e.stopPropagation();
+  renderCatMenu();
+  document.getElementById("catMenu").classList.toggle("open");
+  document.getElementById("catBtn").classList.toggle("open");
+}
+function closeCatMenu(){
+  document.getElementById("catMenu").classList.remove("open");
+  document.getElementById("catBtn").classList.remove("open");
+}
+function pickCategory(c){ state.category = c; closeCatMenu(); renderShop(); }
+document.addEventListener("click", e => {
+  if (!e.target.closest("#catMenu") && !e.target.closest("#catBtn")) closeCatMenu();
+});
+
+/* carousel dots */
+document.getElementById("carousel").addEventListener("scroll", function(){
+  const i = Math.round(this.scrollLeft / (this.scrollWidth - this.clientWidth || 1));
+  document.querySelectorAll("#caroDots span").forEach((d, k) => d.classList.toggle("on", k === Math.min(i, 1)));
+});
+
+/* favorites */
+function toggleFav(id, el){
+  if (state.favorites.has(id)){ state.favorites.delete(id); }
+  else { state.favorites.add(id); toast("Added to favorites"); }
+  if (el) el.classList.toggle("faved", state.favorites.has(id));
+  if (current === "profile") renderProfile();
+}
+
+/* ================= SHEETS ================= */
+function openSheet(id){
+  document.getElementById("veil").classList.add("open");
+  document.getElementById(id).classList.add("open");
+}
+function closeSheets(){
+  document.getElementById("veil").classList.remove("open");
+  document.querySelectorAll(".sheet").forEach(s => s.classList.remove("open"));
+}
+
+/* product sheet */
+function openProductSheet(id){
+  const p = byId(id);
+  state.sheetProduct = p;
+  state.sheetSize = p.sizes.length === 1 ? p.sizes[0] : null;
+  document.getElementById("psImg").src = p.altImg || p.img;
+  document.getElementById("psName").textContent = p.name;
+  document.getElementById("psCat").textContent = "Category: " + p.cat.replace(/s$/,"");
+  document.getElementById("psPrice").textContent = money(p.price);
+  document.getElementById("psOos").style.display = p.inStock ? "none" : "block";
+  document.getElementById("psAdd").disabled = !p.inStock;
+  renderSheetSizes();
+  openSheet("productSheet");
+}
+function renderSheetSizes(){
+  const p = state.sheetProduct;
+  document.getElementById("psSizes").innerHTML = p.sizes.map(s =>
+    `<button class="${s === state.sheetSize ? "sel" : ""}" onclick="state.sheetSize='${s}';renderSheetSizes()">${s}</button>`
+  ).join("");
+}
+function addToCartFromSheet(){
+  const p = state.sheetProduct;
+  if (!p.inStock) return;
+  if (!state.sheetSize){ toast("Select a size"); return; }
+  const found = state.cart.find(c => c.id === p.id && c.size === state.sheetSize);
+  if (found) found.qty++;
+  else state.cart.push({id:p.id, size:state.sheetSize, qty:1});
+  closeSheets();
+  toast("Added to cart");
+}
+
+/* filter sheet */
+function openFilterSheet(){ renderFilterSheet(); openSheet("filterSheet"); }
+function renderFilterSheet(){
+  const f = state.filters;
+  document.getElementById("fBrand").innerHTML =
+    `<button class="${f.brand ? "sel" : ""}" onclick="state.filters.brand=!state.filters.brand;renderFilterSheet();renderShop()">Optic</button>`;
+  document.getElementById("fSize").innerHTML = ["S","M","L","XL","M/L"].map(s =>
+    `<button class="${f.sizes.includes(s) ? "sel" : ""}" onclick="toggleSizeFilter('${s}')">${s}</button>`
+  ).join("");
+  document.getElementById("fStock").innerHTML =
+    `<button class="${f.inStock ? "sel" : ""}" onclick="state.filters.inStock=!state.filters.inStock;renderFilterSheet();renderShop()">In Stock</button>`;
+}
+function toggleSizeFilter(s){
+  const arr = state.filters.sizes, i = arr.indexOf(s);
+  i >= 0 ? arr.splice(i,1) : arr.push(s);
+  renderFilterSheet(); renderShop();
+}
+
+/* ================= CART ================= */
+function renderCart(){
+  const listEl = document.getElementById("cartList");
+  const sumEl = document.getElementById("cartSummaryWrap");
+  if (!state.cart.length){
+    listEl.innerHTML = `<div class="cart-empty">Your cart is empty.<br>Find something in the shop.</div>`;
+    sumEl.innerHTML = "";
+    return;
+  }
+  listEl.innerHTML = state.cart.map((c, i) => {
+    const p = byId(c.id);
+    return `<div class="cart-item">
+      <img class="thumb" src="${p.cartImg || p.img}" alt="">
+      <div class="mid">
+        <div class="cname">${p.name}</div>
+        <div class="meta">Category: <span>${p.cat.replace(/s$/,"")}</span></div>
+        <div class="meta">Size: <span>${c.size}</span></div>
+        <div class="qty">
+          <button onclick="chQty(${i},-1)">&minus;</button>
+          <span class="q">${c.qty}</span>
+          <button onclick="chQty(${i},1)">+</button>
+        </div>
+      </div>
+      <div class="right">
+        <button class="btn-trash" onclick="rmCart(${i})" aria-label="Remove">
+          <svg width="19" height="21" viewBox="0 0 20 22"><path d="M3 5h14M8 5V3h4v2M5 5l1 15h8l1-15M8.5 9v7M11.5 9v7" stroke="#222" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="lprice">${money(p.price * c.qty)}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  const sub = state.cart.reduce((t,c) => t + byId(c.id).price * c.qty, 0);
+  const total = sub + SHIPPING - DISCOUNT;
+  sumEl.innerHTML = `
+    <div class="summary">
+      <h3>Order Summary</h3>
+      <div class="srow"><span>Subtotal Product</span><span>${money(sub)}</span></div>
+      <div class="srow"><span>Shipping</span><span>${money(SHIPPING)}</span></div>
+      <div class="srow"><span>Total Discount</span><span>-${money(DISCOUNT)}</span></div>
+      <div class="srow total"><span>Estimated Total</span><span>${money(total)}</span></div>
+      <button class="btn-checkout" onclick="toast('Checkout is a demo action')">CHECK OUT</button>
+    </div>
+    <div class="payrow">
+      <button class="pay-shop" onclick="toast('shop Pay - demo')">shop</button>
+      <button class="pay-paypal" onclick="toast('PayPal - demo')"><img src="assets/paypal.svg" alt="PayPal"></button>
+      <button class="pay-gpay" onclick="toast('Google Pay - demo')">
+        <svg width="19" height="19" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.7-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.2v3.1C3.2 21.3 7.3 24 12 24z"/><path fill="#FBBC04" d="M5.3 14.3c-.5-1.5-.5-3.1 0-4.6V6.6H1.2c-1.6 3.4-1.6 7.4 0 10.8l4.1-3.1z"/><path fill="#EA4335" d="M12 4.7c1.7 0 3.3.6 4.5 1.8L20 3C17.9 1 15.1 0 12 0 7.3 0 3.2 2.7 1.2 6.6l4.1 3.1c.9-2.9 3.6-5 6.7-5z"/></svg>
+        Pay
+      </button>
+    </div>`;
+}
+function chQty(i, d){
+  const c = state.cart[i];
+  c.qty = Math.max(1, c.qty + d);
+  renderCart();
+}
+function rmCart(i){ state.cart.splice(i,1); renderCart(); toast("Removed from cart"); }
+
+/* ================= PROFILE ================= */
+function setProfileTab(t){ state.profileTab = t; renderProfile(); }
+function renderProfile(){
+  ["orders","favorites","settings"].forEach(t =>
+    document.getElementById("ptab-" + t).classList.toggle("on", state.profileTab === t));
+  const body = document.getElementById("ptabBody");
+
+  if (state.profileTab === "favorites"){
+    const favs = PRODUCTS.filter(p => state.favorites.has(p.id));
+    body.innerHTML = favs.length
+      ? `<div class="grid" style="padding:0">${favs.map(productCard).join("")}</div>`
+      : `<div class="no-results">No favorites yet — tap the heart on any product.</div>`;
+
+  } else if (state.profileTab === "orders"){
+    body.innerHTML = state.orders.map(o => {
+      const p = byId(o.id);
+      return `<div class="order-item">
+        <img class="othumb" src="${p.img}" alt="">
+        <div>
+          <div class="ostatus">${o.status}</div>
+          <div class="oname">${p.name}</div>
+          <div class="odesc">${(p.desc || "").replace(/\n/g,"<br>")}</div>
+        </div>
+      </div>`;
+    }).join("") || `<div class="no-results">No orders yet.</div>`;
+
+  } else {
+    body.innerHTML = `
+      <div class="set-row"><span class="k">Shane Kemp</span><button class="action" onclick="toast('Edit name is a demo action')">Edit</button></div>
+      <div class="set-sub"><span class="k2">Email</span><span class="v">email@email.com</span></div>
+      <div class="set-row" style="margin-top:14px"><span class="k">Addresses</span><button class="action" onclick="openSheet('addrSheet')">Add</button></div>
+      ${state.addresses.map((a, i) => `
+        <div class="addr" onclick="setDefaultAddr(${i})">
+          <svg width="18" height="21" viewBox="0 0 18 22"><path d="M9 1a7.4 7.4 0 0 1 7.4 7.4C16.4 13.5 9 21 9 21S1.6 13.5 1.6 8.4A7.4 7.4 0 0 1 9 1z" fill="none" stroke="#111" stroke-width="1.7"/><circle cx="9" cy="8.4" r="2.6" fill="none" stroke="#111" stroke-width="1.7"/></svg>
+          <div class="a-mid">
+            <div class="a-name">${a.name}${a.def ? '<span class="def">Default</span>' : ""}</div>
+            <div class="a-line">${a.line}</div>
+          </div>
+          <svg class="chev" width="8" height="14" viewBox="0 0 8 14"><path d="M1 1l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </div>`).join("")}`;
+  }
+}
+function setDefaultAddr(i){
+  state.addresses.forEach((a,k) => a.def = k === i);
+  renderProfile(); toast("Default address updated");
+}
+function saveAddress(){
+  const name = document.getElementById("adName").value.trim();
+  const line = document.getElementById("adLine").value.trim();
+  const city = document.getElementById("adCity").value.trim();
+  if (!name || !line){ toast("Enter a name and address"); return; }
+  state.addresses.push({name, line: line + (city ? ", " + city : "") + ", United States", def:false});
+  document.getElementById("adLine").value = ""; document.getElementById("adCity").value = "";
+  closeSheets(); renderProfile(); toast("Address added");
+}
+
+/* ================= SEARCH ================= */
+function renderSearch(){
+  const q = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+  const list = q ? PRODUCTS.filter(p => (p.name + " " + p.cat).toLowerCase().includes(q)) : PRODUCTS;
+  document.getElementById("searchGrid").innerHTML = list.map(productCard).join("");
+  document.getElementById("searchEmpty").style.display = list.length ? "none" : "block";
+}
+
+/* ================= TOAST ================= */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
+}
+
+/* initial renders so screens are ready */
+renderShop(); renderCart(); renderProfile();
+</script>
+</body>
+</html>
